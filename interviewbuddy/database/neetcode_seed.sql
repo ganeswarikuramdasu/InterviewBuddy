@@ -1,28 +1,13 @@
--- ============================================================
--- InterviewBuddy - NeetCode 150 + Blind 75 catalog (MySQL)
+﻿-- ============================================================
+-- InterviewBuddy - NeetCode 150 + Blind 75 catalog (PostgreSQL)
 -- Adds the remaining NeetCode patterns and the full set of
--- Blnd 75 / NeetCode 150 problems with many-to-many sheet links.
--- Intended to run against the live `interviewbuddy` MySQL DB.
+-- Blind 75 / NeetCode 150 problems with many-to-many sheet links.
+-- Intended to run against a Supabase (PostgreSQL) database AFTER
+-- database/schema.sql + database/seed.sql have been applied.
 -- ============================================================
 
--- ---------- Patterns ----------
-INSERT INTO coding_patterns (id, name, slug, description, position) VALUES
-(6,  'Two Pointers',                  'two-pointers',                  'Left/right pointer traversal and sorted-array solving patterns.', 6),
-(7,  'Sliding Window',                'sliding-window',                'Fixed and variable-size window traversal over arrays/strings.', 7),
-(8,  'Trees',                         'trees',                         'Binary tree traversals, DFS/BFS and tree properties.', 8),
-(9,  'Tries',                         'tries',                         'Prefix-tree data structures for efficient string operations.', 9),
-(10, 'Heap / Priority Queue',         'heap-priority-queue',           'Priority-based selection, k-largest/smallest and scheduling.', 10),
-(11, 'Backtracking',                  'backtracking',                  'Constraint-based exhaustive search with pruning.', 11),
-(12, 'Graphs',                        'graphs',                        'BFS, DFS, topological sort and connectivity on graphs.', 12),
-(13, 'Advanced Graphs',               'advanced-graphs',               'Shortest paths, MST, Euler paths and flow on graphs.', 13),
-(14, '1-D Dynamic Programming',       '1-d-dynamic-programming',       'Single-state dynamic programming (memoization/tabulation).', 14),
-(15, '2-D Dynamic Programming',       '2-d-dynamic-programming',       'Multi-dimensional state dynamic programming.', 15),
-(16, 'Greedy',                        'greedy',                        'Locally optimal choices that give a globally optimal result.', 16),
-(17, 'Intervals',                     'intervals',                     'Scheduling and interval merging problems.', 17),
-(18, 'Math & Geometry',               'math-geometry',                 'Number theory, matrix manipulation and geometric problems.', 18),
-(19, 'Bit Manipulation',              'bit-manipulation',              'Bit-level operations: masks, shifts and XOR tricks.', 19);
-
-ALTER TABLE coding_patterns AUTO_INCREMENT = 20;
+-- Note: all 19 coding_patterns (id 1-19) are already inserted by database/seed.sql,
+-- so no patterns are re-inserted here.
 
 -- ---------- Retag the pre-existing problems ----------
 UPDATE coding_problems SET pattern_id = 1  WHERE slug = 'two-sum';
@@ -790,7 +775,8 @@ INSERT INTO coding_problems (title, slug, description, constraints_text, difficu
 -- NeetCode 150 = exactly the 150 NeetCode problems.
 -- Combination Sum IV is a Blind 75 classic but NOT part of NeetCode 150, so it is excluded here.
 INSERT INTO coding_sheet_problems (sheet_id, problem_id)
-SELECT 1, id FROM coding_problems WHERE slug <> 'combination-sum-iv';
+SELECT 1, id FROM coding_problems WHERE slug <> 'combination-sum-iv'
+ON CONFLICT DO NOTHING;
 
 -- Blind 75 subset (the classic 75)
 INSERT INTO coding_sheet_problems (sheet_id, problem_id)
@@ -881,25 +867,5 @@ SELECT 2, id FROM coding_problems WHERE slug IN (
 -- Tries
 'implement-trie-prefix-tree',
 'design-add-and-search-words-data-structure'
-);
+) ON CONFLICT DO NOTHING;
 
--- ============================================================
--- CLEANUP: drop the legacy single-sheet column (data moved above)
--- ============================================================
-SET @fk_exists := (SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-                   WHERE table_schema = 'interviewbuddy' AND table_name = 'coding_problems'
-                     AND constraint_type = 'FOREIGN KEY' AND constraint_name = 'fk_coding_sheet');
-SET @sql_alter := IF(@fk_exists > 0,
-                     'ALTER TABLE coding_problems DROP FOREIGN KEY fk_coding_sheet',
-                     'SELECT 1');
-PREPARE stmt FROM @sql_alter; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-SET @idx_exists := (SELECT COUNT(*) FROM information_schema.STATISTICS
-                    WHERE table_schema = 'interviewbuddy' AND table_name = 'coding_problems'
-                      AND index_name = 'idx_coding_sheet');
-SET @sql_idx := IF(@idx_exists > 0, 'ALTER TABLE coding_problems DROP INDEX idx_coding_sheet', 'SELECT 1');
-PREPARE stmt FROM @sql_idx; EXECUTE stmt; DEALLOCATE PREPARE stmt;
-SET @col_exists := (SELECT COUNT(*) FROM information_schema.COLUMNS
-                    WHERE table_schema = 'interviewbuddy' AND table_name = 'coding_problems'
-                      AND column_name = 'sheet_id');
-SET @sql_col := IF(@col_exists > 0, 'ALTER TABLE coding_problems DROP COLUMN sheet_id', 'SELECT 1');
-PREPARE stmt FROM @sql_col; EXECUTE stmt; DEALLOCATE PREPARE stmt;

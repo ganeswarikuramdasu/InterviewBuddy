@@ -62,10 +62,32 @@ variable "s3_bundle_url" {
   description = "s3://bucket/interviewbuddy.tar.gz alternative to git clone"
 }
 
+variable "db_host" {
+  type        = string
+  default     = ""
+  description = "Supabase DB hostname only, e.g. db.<PROJECT-REF>.supabase.co"
+}
+
+variable "db_port" {
+  type    = number
+  default = 5432
+}
+
+variable "db_username" {
+  type    = string
+  default = "postgres"
+}
+
 variable "db_password" {
-  type      = string
-  default   = "change-me-now"
-  sensitive = true
+  type        = string
+  default     = "change-me-now"
+  sensitive   = true
+  description = "Your Supabase database password"
+}
+
+variable "db_sslmode" {
+  type    = string
+  default = "require" # Supabase requires TLS
 }
 
 variable "jwt_secret" {
@@ -87,7 +109,7 @@ variable "code_execution_service_url" {
 
 variable "db_name" {
   type    = string
-  default = "interviewbuddy"
+  default = "postgres"
 }
 
 variable "frontend_port" {
@@ -123,16 +145,20 @@ data "aws_ami" "al2023" {
 # of Terraform templating, so it also runs standalone from the AWS console.
 locals {
   env_header = templatefile("${path.module}/env.tftpl", {
-    git_repo                  = var.git_repo
-    git_branch                = var.git_branch
-    git_token                 = var.git_token
-    s3_bundle_url             = var.s3_bundle_url
-    db_password               = var.db_password
-    jwt_secret                = var.jwt_secret
-    gemini_api_key            = var.gemini_api_key
+    git_repo                   = var.git_repo
+    git_branch                 = var.git_branch
+    git_token                  = var.git_token
+    s3_bundle_url              = var.s3_bundle_url
+    db_host                    = var.db_host
+    db_port                    = var.db_port
+    db_name                    = var.db_name
+    db_username                = var.db_username
+    db_password                = var.db_password
+    db_sslmode                 = var.db_sslmode
+    jwt_secret                 = var.jwt_secret
+    gemini_api_key             = var.gemini_api_key
     code_execution_service_url = var.code_execution_service_url
-    frontend_port             = var.frontend_port
-    db_name                   = var.db_name
+    frontend_port              = var.frontend_port
   })
   user_data = "${local.env_header}\n\n${file("${path.module}/../user-data.sh")}"
 }

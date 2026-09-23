@@ -21,12 +21,17 @@ GIT_REPO="${GIT_REPO:-}"
 GIT_BRANCH="${GIT_BRANCH:-main}"
 GIT_TOKEN="${GIT_TOKEN:-}"
 S3_BUNDLE_URL="${S3_BUNDLE_URL:-}"
+# Supabase (hosted PostgreSQL) connection
+DB_HOST="${DB_HOST:-}"
+DB_PORT="${DB_PORT:-5432}"
+DB_NAME="${DB_NAME:-postgres}"
+DB_USERNAME="${DB_USERNAME:-postgres}"
 DB_PASSWORD="${DB_PASSWORD:-change-me-now}"
+DB_SSLMODE="${DB_SSLMODE:-require}"
 JWT_SECRET="${JWT_SECRET:-}"
 GEMINI_API_KEY="${GEMINI_API_KEY:-}"
 CODE_EXECUTION_SERVICE_URL="${CODE_EXECUTION_SERVICE_URL:-}"
 FRONTEND_PORT="${FRONTEND_PORT:-80}"
-DB_NAME="${DB_NAME:-interviewbuddy}"
 
 log() { echo "[deploy] $*"; }
 
@@ -87,8 +92,12 @@ log "Compose file at: $${APP_DIR}/docker-compose.yml"
 # ------------------------------------------------------------------
 log "Writing .env ..."
 cat > .env <<EOF
-DB_PASSWORD=${DB_PASSWORD}
+DB_HOST=${DB_HOST}
+DB_PORT=${DB_PORT}
 DB_NAME=${DB_NAME}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+DB_SSLMODE=${DB_SSLMODE}
 JWT_SECRET=${JWT_SECRET}
 JWT_EXPIRATION_MS=86400000
 CORS_ALLOWED_ORIGINS=http://localhost:${FRONTEND_PORT}

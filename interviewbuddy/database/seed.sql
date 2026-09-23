@@ -127,10 +127,10 @@ INSERT INTO coding_patterns (name, slug, description, position) VALUES
 -- NOTE: To stay in sync with the live catalog, the full
 --       Neetcode 150 + Blind 75 dataset (151 problems with exact
 --       sheet memberships) is maintained separately in
---       database/neetcode_seed_mysql.sql. Run it AFTER this file:
+--       database/neetcode_seed.sql. Run it AFTER this file:
 --       it retags the patterns below, inserts the remaining
 --       problems, links every problem to its sheets through
---       coding_sheet_problems, and drops the legacy sheet_id column.
+--       coding_sheet_problems, and keeps the legacy column layout.
 -- ============================================================
 INSERT INTO coding_problems (title, slug, description, constraints_text, difficulty, topic, pattern_id, external_url, platform, is_published) VALUES
 ('Two Sum', 'two-sum',
@@ -176,7 +176,7 @@ nums is sorted in ascending order',
  TRUE);
 
 -- Sheet links for the base problems (both belong to Neetcode 150; the Blind 75
--- subset is assigned by neetcode_seed_mysql.sql).
+-- subset is assigned by neetcode_seed.sql).
 INSERT INTO coding_sheet_problems (sheet_id, problem_id) VALUES
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6),
 (2, 1), (2, 2), (2, 3), (2, 5), (2, 6);

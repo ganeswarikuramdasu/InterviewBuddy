@@ -19,7 +19,7 @@ InterviewBuddy is a full-stack platform combining Campus Recruitment Training (C
 
 ## Technology Stack
 
-**Backend:** Java 21, Spring Boot 3, Spring Web, Spring Security, JWT (jjwt), Spring Data JPA / Hibernate, MySQL 8, Bean Validation, Lombok, Maven
+**Backend:** Java 21, Spring Boot 3, Spring Web, Spring Security, JWT (jjwt), Spring Data JPA / Hibernate, PostgreSQL (Supabase-hosted), Bean Validation, Lombok, Maven
 
 **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, React Router, Axios
 
@@ -35,11 +35,12 @@ Clean layered Spring Boot architecture: `controller → service → repository �
 
 ### Production (Docker — recommended)
 
-One command runs MySQL + backend + frontend (nginx), with health checks and a
-production profile (`DDL_AUTO=validate`, demo seeds off):
+The database is a hosted **Supabase** (PostgreSQL) project — it is not part of
+the Docker stack. `docker compose` runs backend + frontend (nginx), with health
+checks and a production profile (`DDL_AUTO=validate`, demo seeds off):
 
 ```bash
-cp .env.example .env        # edit DB_PASSWORD and JWT_SECRET first
+cp .env.example .env        # fill in Supabase DB_HOST/DB_PASSWORD + JWT_SECRET
 docker compose up -d --build
 # → http://localhost:8081
 ```
@@ -59,8 +60,10 @@ or Terraform): [`deploy/aws/README.md`](deploy/aws/README.md).
 ### Local development
 
 ```bash
-# 1. Start MySQL (via Docker) and load schema + seed data
-docker compose up -d mysql
+# 1. Load schema + seed data into your Supabase project
+#    (Supabase Dashboard > SQL Editor, or psql — see docs/setup.md):
+#    run database/schema.sql, then database/seed.sql, then database/neetcode_seed.sql
+#    and set DB_HOST/DB_PORT/DB_NAME/DB_USERNAME/DB_PASSWORD/DB_SSLMODE in .env
 
 # 2. Start the backend
 cd backend
@@ -87,7 +90,12 @@ Demo accounts are created automatically on first backend startup (see `DataIniti
 
 ## Database Setup
 
-`database/schema.sql` (25 tables, foreign keys, indexes, constraints) and `database/seed.sql` (CRT topics/questions, coding problems + test cases, a contest, an interview question bank, learning resources) — see [`docs/setup.md`](docs/setup.md) for how to load them.
+The database is a **Supabase** (hosted PostgreSQL) project. `database/schema.sql`
+(25 tables, foreign keys, indexes, constraints), `database/seed.sql` (CRT
+topics/questions, coding problems + test cases, an interview question bank,
+learning resources) and `database/neetcode_seed.sql` (full Neetcode 150 + Blind
+75 catalog) are PostgreSQL scripts — load them in that order, e.g. from the
+Supabase SQL Editor or `psql` (see [`docs/setup.md`](docs/setup.md)).
 
 ## API Overview
 
@@ -116,7 +124,7 @@ docker compose build
 ```bash
 cd backend && mvn test
 ```
-Runs against an in-memory H2 database — no MySQL instance required. Covers auth (register/login/duplicate handling), JWT-based role enforcement (a USER token gets 403 on admin endpoints), CRT practice scoring logic, and the dev-mode code execution heuristic. **Use JDK 21** (matching the production runtime) — newer JDKs can break Mockito's inline mocking.
+Runs against an in-memory H2 database — no database instance required. Covers auth (register/login/duplicate handling), JWT-based role enforcement (a USER token gets 403 on admin endpoints), CRT practice scoring logic, and the dev-mode code execution heuristic. **Use JDK 21** (matching the production runtime) — newer JDKs can break Mockito's inline mocking.
 
 ## Known Limitations
 
@@ -141,10 +149,10 @@ These are intentional, disclosed trade-offs rather than oversights:
 interviewbuddy/
 ├── backend/            Spring Boot API (Java 21, Maven) + Dockerfile
 ├── frontend/           React + TypeScript + Vite + Tailwind SPA + Dockerfile + nginx.conf
-├── database/           schema.sql, seed.sql
+├── database/           schema.sql, seed.sql, neetcode_seed.sql (PostgreSQL/Supabase)
 ├── docs/                architecture.md, api.md, setup.md, deployment.md
 ├── .github/workflows/   CI: build + test + publish Docker images
 ├── .env.example
-├── docker-compose.yml   Full stack: MySQL + backend + frontend (nginx)
+├── docker-compose.yml   Backend + frontend (nginx) against Supabase PostgreSQL
 └── README.md
 ```

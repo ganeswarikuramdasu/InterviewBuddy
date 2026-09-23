@@ -1,15 +1,17 @@
 # InterviewBuddy — AWS Deployment (Free Tier)
 
-Deploy the whole stack (MySQL + backend + frontend) on **one free-tier
-EC2 instance** using the Docker config already in the repo. Everything runs
-inside the `docker-compose.yml` you already have.
+Deploy the app (backend + frontend) on **one free-tier EC2 instance** using the
+Docker config already in the repo. The database is **not** part of the AWS
+stack — it lives in a **Supabase** (hosted PostgreSQL) project, so no RDS
+instance is needed. Everything else runs inside the `docker-compose.yml` you
+already have.
 
 > **Free-tier reality check:** the AWS 12-month free tier includes **one**
-> `t2.micro`/`t3.micro` EC2 and (separately) one `db.t2/t3.micro` RDS, each up
-> to 750 hours/month. You *can* run multiple AWS services, but only one
-> instance of each eligible type is free. The instructions below stay on a
-> single EC2 so it's fully free. Anything extra (bigger/extra instances, NAT
-> gateway, Fargate, large EIP) can start billing you.
+> `t2.micro`/`t3.micro` EC2 up to 750 hours/month. The database lives in
+> Supabase (free tier) rather than AWS RDS, so there's no separate database
+> instance to pay for. The instructions below stay on a single EC2 so it's
+> fully free. Anything extra (bigger/extra instances, NAT gateway, Fargate,
+> large EIP) can start billing you.
 
 ---
 
@@ -71,10 +73,14 @@ GIT_BRANCH="main"
 S3_BUNDLE_URL="s3://<bucket>/interviewbuddy.tar.gz"
 ```
 
-> The other `${...}` values (DB_PASSWORD, JWT_SECRET, GEMINI_API_KEY, ...) can
-> be left as-is in the script, or set blank — secrets are read from your
-> `.env`/environment later. At minimum, change `DB_PASSWORD` from
-> `change-me-now`.
+> The other `${...}` values (DB_HOST, DB_PASSWORD, JWT_SECRET, GEMINI_API_KEY,
+> ...) can be left as-is in the script, or set blank — secrets are read from
+> your `.env`/environment later. At minimum, set `DB_HOST` to your Supabase DB
+> hostname and `DB_PASSWORD` to your Supabase database password.
+>
+> Before first boot, load the schema + seed data into your Supabase project
+> (`database/schema.sql`, `database/seed.sql`, `database/neetcode_seed.sql` in
+> that order — see `docs/setup.md`). The EC2 instance only *connects* to it.
 
 Launch. First boot takes a few minutes (installs Docker + builds images).
 
@@ -119,7 +125,8 @@ cd deploy/aws/terraform
 export TF_VAR_key_name="interviewbuddy"              # existing key pair name
 export TF_VAR_git_repo="https://github.com/you/interviewbuddy.git"
 export TF_VAR_git_token=""                           # PAT if private
-export TF_VAR_db_password="a-strong-password"
+export TF_VAR_db_host="db.<your-project-ref>.supabase.co"
+export TF_VAR_db_password="your-supabase-db-password"
 export TF_VAR_jwt_secret="$(openssl rand -base64 48)"
 # optional:
 # export TF_VAR_gemini_api_key="..."

@@ -5,25 +5,26 @@
 - **Java 21+** (JDK)
 - **Maven 3.9+** (or use your IDE's bundled Maven)
 - **Node.js 18+** and npm
-- **MySQL 8.0+** (running locally, or via the provided `docker-compose.yml`)
+- **A Supabase project** (hosted PostgreSQL) — free tier is fine. Create one at https://supabase.com and note the DB settings under **Project Settings > Database → "Connection string"** (host, port, database, user) plus the database password you set when creating the project.
 
-## 1. Database Setup
+## 1. Database Setup (Supabase)
 
-### Option A — Docker (recommended for quick start)
+The database is hosted in Supabase; there is nothing to run locally. Load the
+PostgreSQL scripts **in order** into your Supabase project — easiest via the
+**Supabase Dashboard > SQL Editor** (New query → paste the file → Run), or via
+`psql`:
+
 ```bash
-# Full production stack (MySQL + backend + frontend) — see docs/deployment.md
-docker compose up -d --build
-
-# Or just the database for local development
-docker compose up -d mysql
+# psql, using the connection string from Supabase project settings
+psql "postgresql://postgres:PASSWORD@db.<PROJECT-REF>.supabase.co:5432/postgres?sslmode=require" \
+  -f database/schema.sql -f database/seed.sql -f database/neetcode_seed.sql
 ```
-The `mysql` service starts MySQL 8 on `localhost:3306`, creates the `interviewbuddy` database, and automatically runs `database/schema.sql` and `database/seed.sql` on first boot.
 
-### Option B — Local MySQL install
-```bash
-mysql -u root -p < database/schema.sql
-mysql -u root -p < database/seed.sql
-```
+Order matters:
+
+1. `database/schema.sql` — 25 tables, foreign keys, indexes, constraints
+2. `database/seed.sql` — CRT topics/questions, base coding problems, interview question bank, learning resources
+3. `database/neetcode_seed.sql` — full Neetcode 150 + Blind 75 problem catalog and sheet links (repo-safe to re-run thanks to `ON CONFLICT DO NOTHING`)
 
 > Demo **user accounts** (admin@interviewbuddy.com, user@interviewbuddy.com, etc.) are **not** inserted by `seed.sql`. They are created automatically the first time the backend starts (see `DataInitializer.java`), so their passwords are hashed correctly by the live BCrypt bean rather than a hand-computed hash in SQL.
 
@@ -36,11 +37,12 @@ cp ../.env.example .env   # or just export the variables in your shell
 
 Set at minimum:
 ```
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=interviewbuddy
-DB_USERNAME=root
-DB_PASSWORD=root
+DB_HOST=db.<PROJECT-REF>.supabase.co   # hostname only, no protocol/port
+DB_PORT=5432
+DB_NAME=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=<your Supabase database password>
+DB_SSLMODE=require                      # "require" for Supabase, "disable" for a local Postgres
 JWT_SECRET=<any long random string>
 ```
 
@@ -60,7 +62,8 @@ The API starts on `http://localhost:8080`. On first run, `DataInitializer` creat
 
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
-| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | Yes | localhost/3306/interviewbuddy/root/root | MySQL connection |
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | Yes | see `.env.example` | Supabase (PostgreSQL) connection — from `Project Settings > Database > Connection string` |
+| `DB_SSLMODE` | No | require | TLS mode for the JDBC URL (`require` for Supabase, `disable` for a local Postgres) |
 | `JWT_SECRET` | Yes (prod) | dev placeholder | Signs JWT access tokens — use 32+ random chars in production |
 | `JWT_EXPIRATION_MS` | No | 86400000 (24h) | Token lifetime |
 | `CORS_ALLOWED_ORIGINS` | No | http://localhost:5173 | Comma-separated allowed frontend origins |
@@ -109,7 +112,7 @@ Without a key, the AI Interview module still works end-to-end (question selectio
 cd backend
 mvn test
 ```
-Uses an in-memory H2 database (see `src/test/resources/application.yml`) so no MySQL instance is needed for tests.
+Uses an in-memory H2 database (see `src/test/resources/application.yml`) so no database instance is needed for tests.
 
 ## 7. Postman / API Testing
 

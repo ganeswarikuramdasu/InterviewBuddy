@@ -1,7 +1,8 @@
 # InterviewBuddy — Deployment Guide
 
 InterviewBuddy ships as a fully containerized, single-command deployment:
-**MySQL + Spring Boot backend + nginx (React SPA & reverse proxy)**.
+**Spring Boot backend + nginx (React SPA & reverse proxy)**. The database is a
+**hosted Supabase** (PostgreSQL) project and is not part of the Docker stack.
 
 ## Architecture
 
@@ -17,9 +18,9 @@ InterviewBuddy ships as a fully containerized, single-command deployment:
                         │  • JWT auth / REST API      │
                         │  /actuator/health (probe)   │
                         └──────────────┬──────────────┘
-                                       │
+                                       │  TLS
                         ┌──────────────▼──────────────┐
-                        │  MySQL 8 (schema.sql+seed)  │
+                        │  Supabase (hosted PostgreSQL)│
                         └─────────────────────────────┘
 ```
 
@@ -33,7 +34,7 @@ default stack (the backend still supports `CORS_ALLOWED_ORIGINS` for direct call
 ## Deploy
 
 ```bash
-cp .env.example .env       # <-- edit secrets (DB_PASSWORD, JWT_SECRET, etc.)
+cp .env.example .env       # <-- fill in Supabase DB_HOST/DB_PASSWORD + JWT_SECRET
 docker compose up -d --build
 ```
 
@@ -41,7 +42,7 @@ Then open `http://localhost:8081`.
 
 - **Migration without downtime**: `docker compose build && docker compose up -d`
 - **Logs**: `docker compose logs -f backend frontend`
-- **Stop**: `docker compose down` (add `-v` to also delete the database volume)
+- **Stop**: `docker compose down`
 - **Update**: `git pull && docker compose up -d --build`
 
 ## Configuration (`.env`)
@@ -50,7 +51,12 @@ Set these before your first deploy:
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `DB_PASSWORD` | **Yes** | MySQL root password. **Change from `root`.** |
+| `DB_HOST` | **Yes** | Supabase DB hostname only (e.g. `db.<PROJECT-REF>.supabase.co`), from Project Settings > Database. |
+| `DB_PORT` | No | `5432` |
+| `DB_NAME` | No | `postgres` |
+| `DB_USERNAME` | No | `postgres` |
+| `DB_PASSWORD` | **Yes** | Your Supabase database password. |
+| `DB_SSLMODE` | No | `require` (Supabase requires TLS). |
 | `JWT_SECRET` | **Yes** | 32+ random chars (e.g. `openssl rand -base64 48`). |
 | `GEMINI_API_KEY` | No | Enables real AI interview evaluation (see README). |
 | `CODE_EXECUTION_SERVICE_URL` | No | Judge0-compatible URL for real code execution. |
@@ -65,21 +71,26 @@ Set these before your first deploy:
 | `MAIL_FROM` | No | `From` address for emails (defaults to `MAIL_USERNAME`). |
 | `APP_FRONTEND_URL` | No | Public SPA URL used to build verification links (default `http://localhost:8081`). |
 
-## Database
+## Database (Supabase)
 
-- `database/schema.sql` and `database/seed.sql` are mounted into the MySQL
-  container and run **only on first volume creation**.
+- The schema is **not** auto-loaded by this stack. Apply the PostgreSQL scripts
+  **in order** to your Supabase project via the Supabase Dashboard (SQL Editor)
+  or `psql`: `database/schema.sql`, then `database/seed.sql`, then
+  `database/neetcode_seed.sql` (see `docs/setup.md`).
 - In production the backend runs with `DDL_AUTO=validate` (Spring Profile
   `prod`): Hibernate **validates** the entity/table mapping but never alters the
-  schema. To manage schema changes, apply SQL migrations against the volume
-  (back up `interviewbuddy-mysql-data` first).
-- To reset the database: `docker compose down -v` then `docker compose up -d`.
+  schema. Schema changes are managed via SQL migrations applied through the
+  Supabase dashboard or `psql`.
+- To reset the database: point Supabase at a fresh project and re-run the three
+  scripts (the sheet-membership inserts in `neetcode_seed.sql` are idempotent
+  via `ON CONFLICT DO NOTHING`).
 
 ## Health & Monitoring
 
 - Backend exposes Spring Actuator at `/actuator/health` (Docker healthcheck +
-  uptime probes). Container startup is gated on `mysql` and `backend` being
-  healthy via `depends_on.condition: service_healthy`.
+  uptime probes). The frontend container waits for the backend to be healthy via
+  `depends_on.condition: service_healthy`. The backend's DB health (`Actuator`
+  `db` probe) verifies the Supabase connection.
 
 ## Reverse proxy & HTTPS
 
@@ -98,9 +109,9 @@ Registry on `main`/tags.
 
 - [x] Backend runs as non-root user (`app`) inside the container.
 - [x] Frontend runs as non-root (official `nginx` image).
-- [x] MySQL port bound to `127.0.0.1` only (not exposed publicly).
+- [x] Database is hosted in Supabase (managed, TLS-required) — no public DB port.
 - [x] `SEED_DEMO_USERS=false` in production (via `.env`).
 - [x] `DDL_AUTO=validate` in production profile.
-- [ ] Change `DB_PASSWORD` and `JWT_SECRET` in your real `.env`.
+- [ ] Set `DB_PASSWORD` (Supabase) and `JWT_SECRET` in your real `.env`.
 - [ ] Do not run the heuristic (non-sandboxed) code path in public:
       set `CODE_EXECUTION_SERVICE_URL` to a real Judge0 instance.

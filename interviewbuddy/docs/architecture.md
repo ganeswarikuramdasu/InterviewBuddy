@@ -2,13 +2,13 @@
 
 ## Overview
 
-InterviewBuddy is a monorepo with a Spring Boot REST API backend and a React SPA frontend, backed by MySQL.
+InterviewBuddy is a monorepo with a Spring Boot REST API backend and a React SPA frontend, backed by PostgreSQL (hosted on Supabase).
 
 ```
 Browser (React SPA)
       │  HTTPS / JSON
       ▼
-Spring Boot REST API  ──────►  MySQL
+Spring Boot REST API  ──────►  PostgreSQL (Supabase)
       │
       ├── Spring Security + JWT (stateless auth, role-based authorization)
       ├── CodeExecutionService abstraction ──► Judge0-compatible remote judge (optional)
@@ -25,7 +25,7 @@ controller/admin/  Admin-only endpoints (secured by ROLE_ADMIN at the SecurityFi
 service/           Interfaces describing business operations
 service/impl/      Business logic, transactions, orchestration
 repository/        Spring Data JPA interfaces — one per entity, plus a handful of custom @Query methods
-entity/            JPA entities mapped to MySQL tables
+entity/            JPA entities mapped to PostgreSQL tables (via Supabase)
 dto/request/       Input DTOs with Bean Validation annotations
 dto/response/      Output DTOs — entities are never returned directly from public endpoints (one
                     intentional exception: the admin interview-question-bank endpoints return the
@@ -76,4 +76,4 @@ src/
 
 ## Database
 
-See `database/schema.sql` for the full DDL (25 tables) and `database/seed.sql` for sample CRT/coding/contest/interview/learning content. Foreign keys, unique constraints, and indexes are used throughout; most join/association tables (e.g. `crt_test_questions`, `contest_problems`) use plain `BIGINT` foreign key columns rather than full JPA `@ManyToOne` object graphs, which keeps the entity layer simple and avoids N+1/lazy-loading pitfalls — related data is joined explicitly in service code where needed.
+See `database/schema.sql` for the full DDL (25 tables) and `database/seed.sql` + `database/neetcode_seed.sql` for sample CRT/coding/interview/learning content and the full Neetcode 150 / Blind 75 catalog. All scripts are PostgreSQL dialect and are loaded directly into the Supabase project (SQL Editor or `psql`). Foreign keys, unique constraints, and indexes are used throughout; most join/association tables (e.g. `crt_test_questions`, `coding_sheet_problems`) use plain `BIGINT` foreign key columns rather than full JPA `@ManyToOne` object graphs, which keeps the entity layer simple and avoids N+1/lazy-loading pitfalls — related data is joined explicitly in service code where needed.

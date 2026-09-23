@@ -7,9 +7,10 @@
 spring:
   jpa:
     hibernate:
-      # In production the schema is owned by database/schema.sql (loaded at
-      # PostgreSQL container init) — Hibernate must NOT auto-migrate. 'validate'
-      # fails startup loudly if the schema drifts from the entities.
+      # In production the schema is owned by database/schema.sql (loaded
+      # manually into the Supabase project, e.g. via the Supabase SQL editor
+      # or psql). Hibernate must NOT auto-migrate. 'validate' fails startup
+      # loudly if the schema drifts from the entities.
       # Override with DDL_AUTO if you intentionally use Hibernate-managed schema.
       ddl-auto: ${DDL_AUTO:validate}
     show-sql: false
