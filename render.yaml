@@ -8,6 +8,14 @@ services:
     autoDeploy: true
     healthCheckPath: /actuator/health
     envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JAVA_OPTS
+        value: -XX:MaxRAMPercentage=75.0
+      - key: SEED_DEMO_USERS
+        value: "false"
+      - key: DEMO_PASSWORD
+        value: Passw0rd!
       - key: DB_PORT
         value: "5432"
       - key: DB_NAME
