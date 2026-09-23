@@ -1,0 +1,67 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: interviewbuddy-backend
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:interviewbuddy}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_FROM:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-super-secret-key-in-production-minimum-32-chars}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}   # 24 hours
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}
+  ai:
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      model: ${GEMINI_MODEL:gemini-3.6-flash}
+      base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
+  code-execution:
+    base-url: ${CODE_EXECUTION_SERVICE_URL:}
+    min-solution-length: ${CODE_EXECUTION_MIN_LENGTH:20}
+  demo:
+    seed-users: ${SEED_DEMO_USERS:true}
+    demo-password: ${DEMO_PASSWORD:Passw0rd!}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+  frontend:
+    url: ${APP_FRONTEND_URL:http://localhost:5173}
+    verify-path: ${MAIL_VERIFY_PATH:/verify-email}
+
+logging:
+  level:
+    com.interviewbuddy: INFO
+    org.springframework.security: WARN
