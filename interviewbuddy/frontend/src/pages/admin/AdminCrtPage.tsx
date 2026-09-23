@@ -94,7 +94,7 @@ const AdminCrtPage: React.FC = () => {
       })
       .catch((e) => showToast(getErrorMessage(e), "error"));
   };
-  useEffect(loadTopics, [categoryId]);
+  useEffect(loadTopics, [categoryId]); // eslint-disable-line react-hooks/exhaustive-deps -- categoryId is the trigger; showToast is stable for the effect's lifetime
 
   const loadQuestions = () => {
     if (!topicId) {
@@ -106,7 +106,7 @@ const AdminCrtPage: React.FC = () => {
       .then(setQuestions)
       .catch((e) => showToast(getErrorMessage(e), "error"));
   };
-  useEffect(loadQuestions, [topicId]);
+  useEffect(loadQuestions, [topicId]); // eslint-disable-line react-hooks/exhaustive-deps -- topicId is the trigger; showToast is stable for the effect's lifetime
 
   const loadTests = () => {
     if (!categoryId) return;
@@ -117,7 +117,7 @@ const AdminCrtPage: React.FC = () => {
   };
   useEffect(() => {
     if (tab === "tests") loadTests();
-  }, [tab, categoryId]);
+  }, [tab, categoryId]); // eslint-disable-line react-hooks/exhaustive-deps -- loadTests is intentionally re-created per render
 
   // --- Topics ---
   const openTopicModal = (t?: CrtTopic) => {

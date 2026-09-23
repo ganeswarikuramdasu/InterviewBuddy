@@ -68,7 +68,7 @@ The API starts on `http://localhost:8080`. On first run, `DataInitializer` creat
 | `JWT_EXPIRATION_MS` | No | 86400000 (24h) | Token lifetime |
 | `CORS_ALLOWED_ORIGINS` | No | http://localhost:5173 | Comma-separated allowed frontend origins |
 | `GEMINI_API_KEY` | No | (blank) | Enables real AI-powered interview evaluation. See below. |
-| `GEMINI_MODEL` | No | gemini-1.5-flash | Gemini model name |
+| `GEMINI_MODEL` | No | gemini-3.6-flash | Gemini model name |
 | `CODE_EXECUTION_SERVICE_URL` | No | (blank) | Judge0-compatible API base URL for real code execution. See "Known Limitations". |
 | `SEED_DEMO_USERS` | No | true | Set false to skip demo account creation |
 | `DEMO_PASSWORD` | No | Passw0rd! | Password used for auto-created demo accounts |

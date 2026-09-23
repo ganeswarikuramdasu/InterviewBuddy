@@ -30,7 +30,7 @@ const AdminUsersPage: React.FC = () => {
       .catch((e) => setError(getErrorMessage(e)));
   };
 
-  useEffect(load, [page, role]);
+  useEffect(load, [page, role]); // eslint-disable-line react-hooks/exhaustive-deps -- search is handled by the debounced effect below
 
   useEffect(() => {
     const t = setTimeout(() => {
