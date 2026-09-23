@@ -130,6 +130,11 @@ export TF_VAR_db_password="your-supabase-db-password"
 export TF_VAR_jwt_secret="$(openssl rand -base64 48)"
 # optional:
 # export TF_VAR_gemini_api_key="..."
+# Email verification via Brevo (optional):
+# export TF_VAR_mail_enabled="true"
+# export TF_VAR_brevo_api_key="..."            # API key from Brevo (Settings > API Keys)
+# export TF_VAR_mail_from="you@verified-domain.com"
+# export TF_VAR_app_frontend_url="http://<public-ip>"   # public URL for verification links
 # export AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION
 
 terraform init

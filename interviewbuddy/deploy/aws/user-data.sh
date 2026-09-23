@@ -32,6 +32,13 @@ JWT_SECRET="${JWT_SECRET:-}"
 GEMINI_API_KEY="${GEMINI_API_KEY:-}"
 CODE_EXECUTION_SERVICE_URL="${CODE_EXECUTION_SERVICE_URL:-}"
 FRONTEND_PORT="${FRONTEND_PORT:-80}"
+# Email verification via Brevo (optional: leave BREVO_API_KEY empty to disable)
+MAIL_ENABLED="${MAIL_ENABLED:-false}"
+BREVO_API_KEY="${BREVO_API_KEY:-}"
+BREVO_BASE_URL="${BREVO_BASE_URL:-https://api.brevo.com/v3}"
+MAIL_FROM="${MAIL_FROM:-noreply@interviewbuddy.com}"
+MAIL_FROM_NAME="${MAIL_FROM_NAME:-InterviewBuddy}"
+APP_FRONTEND_URL="${APP_FRONTEND_URL:-}"
 
 log() { echo "[deploy] $*"; }
 
@@ -89,6 +96,11 @@ fi
 cd "$${APP_DIR}"
 log "Compose file at: $${APP_DIR}/docker-compose.yml"
 
+# Public SPA URL used to build email verification links.
+if [ -z "${APP_FRONTEND_URL}" ]; then
+  APP_FRONTEND_URL="http://localhost:${FRONTEND_PORT}"
+fi
+
 # ------------------------------------------------------------------
 log "Writing .env ..."
 cat > .env <<EOF
@@ -105,6 +117,12 @@ GEMINI_API_KEY=${GEMINI_API_KEY}
 GEMINI_MODEL=gemini-1.5-flash
 CODE_EXECUTION_SERVICE_URL=${CODE_EXECUTION_SERVICE_URL}
 SEED_DEMO_USERS=false
+MAIL_ENABLED=${MAIL_ENABLED}
+BREVO_API_KEY=${BREVO_API_KEY}
+BREVO_BASE_URL=${BREVO_BASE_URL}
+MAIL_FROM=${MAIL_FROM}
+MAIL_FROM_NAME=${MAIL_FROM_NAME}
+APP_FRONTEND_URL=${APP_FRONTEND_URL}
 FRONTEND_PORT=${FRONTEND_PORT}
 EOF
 

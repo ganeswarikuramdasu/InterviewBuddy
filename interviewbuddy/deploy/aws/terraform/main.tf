@@ -117,6 +117,38 @@ variable "frontend_port" {
   default = 80
 }
 
+variable "mail_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "brevo_api_key" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+
+variable "brevo_base_url" {
+  type    = string
+  default = "https://api.brevo.com/v3"
+}
+
+variable "mail_from" {
+  type    = string
+  default = "noreply@interviewbuddy.com"
+}
+
+variable "mail_from_name" {
+  type    = string
+  default = "InterviewBuddy"
+}
+
+variable "app_frontend_url" {
+  type        = string
+  default     = ""
+  description = "Public SPA URL used to build email verification links (defaults to http://localhost:<frontend_port>)"
+}
+
 variable "instance_type" {
   type    = string
   default = "t3.micro" # free tier
@@ -159,6 +191,12 @@ locals {
     gemini_api_key             = var.gemini_api_key
     code_execution_service_url = var.code_execution_service_url
     frontend_port              = var.frontend_port
+    mail_enabled               = var.mail_enabled
+    brevo_api_key              = var.brevo_api_key
+    brevo_base_url             = var.brevo_base_url
+    mail_from                  = var.mail_from
+    mail_from_name             = var.mail_from_name
+    app_frontend_url           = var.app_frontend_url
   })
   user_data = "${local.env_header}\n\n${file("${path.module}/../user-data.sh")}"
 }

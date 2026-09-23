@@ -31,6 +31,7 @@ class AuthServiceImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private JwtService jwtService;
     @Mock private AuthenticationManager authenticationManager;
+    @Mock private EmailService emailService;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -86,6 +87,7 @@ class AuthServiceImplTest {
                 .passwordHash("hashed-password")
                 .role(User.Role.USER)
                 .enabled(true)
+                .emailVerified(true)
                 .build();
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
