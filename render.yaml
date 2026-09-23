@@ -3,8 +3,8 @@ services:
     name: interviewbuddy-backend
     runtime: docker
     repo: https://github.com/ganeswarikuramdasu/InterviewBuddy
-    rootDir: interviewbuddy/backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: ./interviewbuddy/backend/Dockerfile
+    dockerContext: ./interviewbuddy/backend
     autoDeploy: true
     healthCheckPath: /actuator/health
     envVars:
