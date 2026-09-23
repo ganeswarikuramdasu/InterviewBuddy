@@ -6,20 +6,22 @@
 # ============================================================
 
 # ---- Stage 1: build ----
-FROM maven:3.9-eclipse-temurin-21 AS build
+# Image tag is pinned for reproducibility. "go-offline" pre-warming is omitted:
+# it fails on some CI builders for artifacts that are only needed at build time,
+# and every container build is a fresh clone anyway, so the cache was useless.
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 WORKDIR /build
 
-# Copy the POM first so dependency resolution is cached independently
-# of source changes (faster incremental rebuilds).
-COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
+# Keep the Maven JVM within Render free tier's 512MB RAM so the build does not
+# get OOM-killed.
+ENV MAVEN_OPTS="-Xmx384m -XX:MaxMetaspaceSize=256m"
 
-# Copy sources and build the jar (tests run inside CI instead of the image).
+COPY pom.xml .
 COPY src ./src
 RUN mvn -B -q -DskipTests package
 
 # ---- Stage 2: runtime ----
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 # curl is used by the Docker healthcheck (actuator endpoint).
