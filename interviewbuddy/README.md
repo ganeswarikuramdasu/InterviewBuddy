@@ -45,10 +45,10 @@ docker compose up -d --build
 # → http://localhost:8081
 ```
 
-> **Email verification (optional):** Set `MAIL_ENABLED=true`, `MAIL_USERNAME` (a
-> Gmail address) and `MAIL_PASSWORD` (a Google **App Password**,
-> not your account password) to send real verification emails on signup. Without
-> these the app runs fully with email verification disabled.
+> **Email verification (optional):** Set `MAIL_ENABLED=true` and `BREVO_API_KEY`
+> to a key from your [Brevo](https://www.brevo.com) account (a verified sender
+> must be set via `MAIL_FROM`) to send real verification emails on signup.
+> Without these the app runs fully with email verification disabled.
 
 Full details, config reference, and security checklist: [`docs/deployment.md`](docs/deployment.md).
 

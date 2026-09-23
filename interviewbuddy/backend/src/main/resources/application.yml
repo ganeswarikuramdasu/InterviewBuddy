@@ -15,19 +15,6 @@ spring:
     password: ${DB_PASSWORD:change-me}
     driver-class-name: org.postgresql.Driver
 
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    from: ${MAIL_FROM:}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
   jpa:
     hibernate:
       ddl-auto: ${DDL_AUTO:update}
@@ -61,6 +48,11 @@ app:
     demo-password: ${DEMO_PASSWORD:Passw0rd!}
   mail:
     enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@interviewbuddy.com}
+    from-name: ${MAIL_FROM_NAME:InterviewBuddy}
+  brevo:
+    api-key: ${BREVO_API_KEY:}
+    base-url: ${BREVO_BASE_URL:https://api.brevo.com/v3}
   frontend:
     url: ${APP_FRONTEND_URL:http://localhost:5173}
     verify-path: ${MAIL_VERIFY_PATH:/verify-email}

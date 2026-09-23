@@ -63,12 +63,11 @@ Set these before your first deploy:
 | `SEED_DEMO_USERS` | No | `false` (default here) disables demo accounts in prod. |
 | `CORS_ALLOWED_ORIGINS` | No | Comma-separated extra origins (default `http://localhost:8081`). |
 | `FRONTEND_PORT` | No | Host port for nginx (default `8081`). |
-| `MAIL_ENABLED` | No | `true` to actually send verification emails via SMTP (default `false`). |
-| `MAIL_HOST` | No | SMTP host (default `smtp.gmail.com`). |
-| `MAIL_PORT` | No | SMTP port (default `587`). |
-| `MAIL_USERNAME` | No | Gmail address to send from. |
-| `MAIL_PASSWORD` | No | Gmail **App Password** (Google Account → Security → 2-Step Verification → App passwords). Never reuse your real account password. |
-| `MAIL_FROM` | No | `From` address for emails (defaults to `MAIL_USERNAME`). |
+| `MAIL_ENABLED` | No | `true` to actually send verification emails via Brevo (default `false`). |
+| `BREVO_API_KEY` | No | Brevo transactional email API key (Settings > API Keys). |
+| `BREVO_BASE_URL` | No | Brevo API base URL (default `https://api.brevo.com/v3`). |
+| `MAIL_FROM` | No | Verified sender address for emails (default `noreply@interviewbuddy.com`). Must be verified in Brevo (Settings > Senders & IPs). |
+| `MAIL_FROM_NAME` | No | Sender display name (default `InterviewBuddy`). |
 | `APP_FRONTEND_URL` | No | Public SPA URL used to build verification links (default `http://localhost:8081`). |
 
 ## Database (Supabase)

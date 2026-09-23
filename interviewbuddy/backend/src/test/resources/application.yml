@@ -12,12 +12,6 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: false
 
-  # Present so MailSenderAutoConfiguration creates the JavaMailSender bean the
-  # EmailService constructor requires. App.mail.enabled=false keeps emails disabled.
-  mail:
-    host: smtp.gmail.com
-    port: 587
-
 app:
   jwt:
     secret: test-secret-key-for-junit-tests-minimum-32-characters-long

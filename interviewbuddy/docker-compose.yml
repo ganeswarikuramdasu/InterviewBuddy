@@ -47,11 +47,10 @@ services:
       SEED_DEMO_USERS: ${SEED_DEMO_USERS:-false}
       DEMO_PASSWORD: ${DEMO_PASSWORD:-Passw0rd!}
       MAIL_ENABLED: ${MAIL_ENABLED:-false}
-      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
-      MAIL_PORT: ${MAIL_PORT:-587}
-      MAIL_USERNAME: ${MAIL_USERNAME:-}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
-      MAIL_FROM: ${MAIL_FROM:-}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      BREVO_BASE_URL: ${BREVO_BASE_URL:-https://api.brevo.com/v3}
+      MAIL_FROM: ${MAIL_FROM:-noreply@interviewbuddy.com}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-InterviewBuddy}
       APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:${FRONTEND_PORT:-8081}}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     healthcheck:
