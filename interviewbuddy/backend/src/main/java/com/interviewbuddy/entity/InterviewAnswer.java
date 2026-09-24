@@ -16,11 +16,11 @@ public class InterviewAnswer {
     private Long sessionId;
 
     @Lob
-    @Column(name = "question_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "question_text", nullable = false, columnDefinition = "text")
     private String questionText;
 
     @Lob
-    @Column(name = "answer_text", columnDefinition = "LONGTEXT")
+    @Column(name = "answer_text", columnDefinition = "text")
     private String answerText;
 
     @Column(name = "display_order")

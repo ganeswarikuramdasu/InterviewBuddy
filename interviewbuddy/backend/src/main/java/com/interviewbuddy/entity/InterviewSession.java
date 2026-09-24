@@ -54,7 +54,7 @@ public class InterviewSession {
     private BigDecimal clarityScore;
 
     @Lob
-    @Column(name = "summary_feedback", columnDefinition = "LONGTEXT")
+    @Column(name = "summary_feedback", columnDefinition = "text")
     private String summaryFeedback;
 
     @Column(name = "started_at")

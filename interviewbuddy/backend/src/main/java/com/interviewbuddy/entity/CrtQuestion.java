@@ -20,7 +20,7 @@ public class CrtQuestion {
     private Long categoryId;
 
     @Lob
-    @Column(name = "question_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "question_text", nullable = false, columnDefinition = "text")
     private String questionText;
 
     @Column(name = "option_a", nullable = false, length = 500)
@@ -36,7 +36,7 @@ public class CrtQuestion {
     private String correctOption;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "text")
     private String explanation;
 
     @Enumerated(EnumType.STRING)

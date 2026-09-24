@@ -16,11 +16,11 @@ public class TestCase {
     private Long problemId;
 
     @Lob
-    @Column(name = "input_data", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "input_data", nullable = false, columnDefinition = "text")
     private String inputData;
 
     @Lob
-    @Column(name = "expected_output", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "expected_output", nullable = false, columnDefinition = "text")
     private String expectedOutput;
 
     @Column(name = "is_sample", nullable = false)

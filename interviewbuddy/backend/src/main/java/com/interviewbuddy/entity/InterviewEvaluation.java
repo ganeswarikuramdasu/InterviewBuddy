@@ -27,11 +27,11 @@ public class InterviewEvaluation {
     private BigDecimal clarityScore;
 
     @Lob
-    @Column(name = "feedback", columnDefinition = "LONGTEXT")
+    @Column(name = "feedback", columnDefinition = "text")
     private String feedback;
 
     @Lob
-    @Column(name = "improvement_suggestions", columnDefinition = "LONGTEXT")
+    @Column(name = "improvement_suggestions", columnDefinition = "text")
     private String improvementSuggestions;
 
     @Column(name = "created_at", updatable = false)

@@ -16,15 +16,15 @@ public class CodingExample {
     private Long problemId;
 
     @Lob
-    @Column(name = "input_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "input_text", nullable = false, columnDefinition = "text")
     private String inputText;
 
     @Lob
-    @Column(name = "output_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "output_text", nullable = false, columnDefinition = "text")
     private String outputText;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "text")
     private String explanation;
 
     @Column(name = "display_order")

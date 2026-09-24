@@ -23,7 +23,7 @@ public class Submission {
     private String language;
 
     @Lob
-    @Column(name = "source_code", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "source_code", nullable = false, columnDefinition = "text")
     private String sourceCode;
 
     @Enumerated(EnumType.STRING)
@@ -46,7 +46,7 @@ public class Submission {
     private Integer memoryKb;
 
     @Lob
-    @Column(name = "stdout_snippet", columnDefinition = "LONGTEXT")
+    @Column(name = "stdout_snippet", columnDefinition = "text")
     private String stdoutSnippet;
 
     @Column(name = "created_at", updatable = false)

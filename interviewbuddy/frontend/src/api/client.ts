@@ -1,8 +1,12 @@
 import axios, { AxiosError } from "axios";
 import type { ApiError } from "../types";
 
+const baseURL =
+  (import.meta.env.VITE_APP_URL as string | undefined)?.replace(/\/+$/, "") ??
+  "/api";
+
 export const apiClient = axios.create({
-  baseURL: "/api",
+  baseURL,
   headers: { "Content-Type": "application/json" },
 });
 

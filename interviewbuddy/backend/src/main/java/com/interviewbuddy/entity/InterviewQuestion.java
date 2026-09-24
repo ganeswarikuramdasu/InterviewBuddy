@@ -26,11 +26,11 @@ public class InterviewQuestion {
     private DifficultyLevel difficulty = DifficultyLevel.MEDIUM;
 
     @Lob
-    @Column(name = "question_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "question_text", nullable = false, columnDefinition = "text")
     private String questionText;
 
     @Lob
-    @Column(name = "model_answer_notes", columnDefinition = "LONGTEXT")
+    @Column(name = "model_answer_notes", columnDefinition = "text")
     private String modelAnswerNotes;
 
     @Column(name = "created_at", updatable = false)

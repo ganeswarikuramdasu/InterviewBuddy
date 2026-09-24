@@ -22,10 +22,10 @@ public class CodingProblem {
     private String slug;
 
     @Lob
-    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @Column(nullable = false, columnDefinition = "text")
     private String description;
 
-    @Column(name = "constraints_text", columnDefinition = "LONGTEXT")
+    @Column(name = "constraints_text", columnDefinition = "text")
     @Lob
     private String constraintsText;
 
@@ -37,7 +37,7 @@ public class CodingProblem {
     private String topic;
 
     @Lob
-    @Column(name = "starter_code", columnDefinition = "LONGTEXT")
+    @Column(name = "starter_code", columnDefinition = "text")
     private String starterCode;
 
     @Column(name = "pattern_id")

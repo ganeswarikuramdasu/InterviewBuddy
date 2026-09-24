@@ -33,7 +33,7 @@ public class LearningResource {
     private String contentUrl;
 
     @Lob
-    @Column(name = "content_body", columnDefinition = "LONGTEXT")
+    @Column(name = "content_body", columnDefinition = "text")
     private String contentBody;
 
     @Column(name = "is_published", nullable = false)
