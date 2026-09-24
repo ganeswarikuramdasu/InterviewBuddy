@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://interviewbuddy-backend.onrender.com/api/:path*"
+      "destination": "https://interview-buddy-jl2u.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",

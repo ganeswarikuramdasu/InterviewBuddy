@@ -82,6 +82,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("GET", "/api/crt/**").permitAll()
                 .requestMatchers("GET", "/api/coding/problems", "/api/coding/problems/*").permitAll()
                 .requestMatchers("GET", "/api/learning/**").permitAll()
