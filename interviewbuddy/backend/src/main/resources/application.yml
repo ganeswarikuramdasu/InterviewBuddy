@@ -10,10 +10,19 @@ spring:
     # DB_PASSWORD to your Supabase project's connection settings (see
     # Project Settings > Database > Connection string). Supabase requires TLS,
     # so sslmode defaults to "require" (use "disable" for a local Postgres).
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:postgres}?sslmode=${DB_SSLMODE:require}
+    # Easier alternative: set DATABASE_URL to the full connection string copied
+    # from Supabase (Connect > Session pooler). If present it wins over the
+    # individual DB_* fields below.
+    url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:postgres}?sslmode=${DB_SSLMODE:require}}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:change-me}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      # Fail fast with a clear error instead of hanging for Hikari's 30s default
+      # (this is what makes Render deploys show a real exception quickly).
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:10000}
+      validation-timeout: ${DB_VALIDATION_TIMEOUT_MS:5000}
+      maximum-pool-size: ${DB_POOL_SIZE:5}
 
   jpa:
     hibernate:
@@ -22,6 +31,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        # Supabase is the only supported database. Pin the dialect so Hibernate
+        # does not need to open a connection just to discover it (avoids the
+        # "Unable to determine Dialect without JDBC metadata" failure mode).
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
 
   servlet:

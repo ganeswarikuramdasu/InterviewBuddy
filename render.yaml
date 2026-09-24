@@ -20,8 +20,10 @@ services:
         value: "5432"
       - key: DB_NAME
         value: postgres
+      # When using the Supabase pooler (recommended for Render), the username is
+      # per-project (postgres.<project-ref>), so it cannot have a fixed default.
       - key: DB_USERNAME
-        value: postgres
+        sync: false
       - key: DB_SSLMODE
         value: require
       - key: DB_HOST

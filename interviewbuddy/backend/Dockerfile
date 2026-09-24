@@ -40,3 +40,9 @@ EXPOSE 8080
 # Container-friendly JVM defaults for predictable behaviour with cgroup limits.
 ENV JAVA_OPTS=""
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+
+# Docker healthcheck against the actuator endpoint (Render uses its own
+# healthCheckPath; this gives docker-compose / local `docker run` the same probe).
+# PORT is only set by the host (Render sets it), otherwise default to 8080.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${PORT:-8080}/actuator/health" > /dev/null || exit 1
