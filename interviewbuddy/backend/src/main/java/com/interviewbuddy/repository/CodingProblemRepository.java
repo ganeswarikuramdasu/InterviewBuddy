@@ -27,7 +27,7 @@ public interface CodingProblemRepository extends JpaRepository<CodingProblem, Lo
 
     @EntityGraph(attributePaths = "sheets")
     @Query("SELECT DISTINCT p FROM CodingProblem p LEFT JOIN p.sheets ps WHERE p.isPublished = true " +
-           "AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+           "AND (:search IS NULL OR LOWER(CONCAT('', p.title)) LIKE LOWER(CONCAT('%', :search, '%'))) " +
            "AND (:difficulty IS NULL OR p.difficulty = :difficulty) " +
            "AND (:sheetId IS NULL OR ps.id = :sheetId) " +
            "AND (:patternId IS NULL OR p.patternId = :patternId) " +
