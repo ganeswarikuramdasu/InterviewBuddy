@@ -1,0 +1,17 @@
+name: Keep backend warm
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping-backend:
+    name: Ping Render health endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" -m 240 https://interview-buddy-jl2u.onrender.com/actuator/health)
+          echo "health status: $code"
+          test "$code" = "200"
